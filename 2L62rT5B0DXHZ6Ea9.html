@@ -1,0 +1,239 @@
+<html><head><base href="https://websimcreativeengine.com/convert-pro/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Convertissez vos fichiers vidéo et audio en ligne gratuitement. Outil rapide de conversion vidéo, conversion MP3 gratuite. Compatible tous appareils.">
+<title>ConvertPro - Convertisseur Vidéo et Audio Ultra-Rapide | Gratuit en Ligne</title>
+<style>
+  :root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f5a623;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --accent-color: #e74c3c;
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+  }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  .tagline {
+    font-size: 1.2em;
+    opacity: 0.8;
+  }
+  .converter-box {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: -50px;
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  input[type="file"], select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  button:hover {
+    background-color: #c0392b;
+  }
+  #progress {
+    margin-top: 20px;
+    display: none;
+  }
+  progress {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+  }
+  .features {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+  }
+  .feature {
+    text-align: center;
+    padding: 20px;
+  }
+  .feature i {
+    font-size: 40px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>ConvertPro</h1>
+    <p class="tagline">Convertisseur Vidéo et Audio Ultra-Rapide | 100% Gratuit</p>
+  </header>
+
+  <div class="container">
+    <div class="converter-box">
+      <form id="convertForm">
+        <div class="input-group">
+          <label for="fileInput">Sélectionnez votre fichier :</label>
+          <input type="file" id="fileInput" accept="video/*,audio/*" required>
+        </div>
+        
+        <div class="input-group">
+          <label for="formatSelect">Format de sortie :</label>
+          <select id="formatSelect" required>
+            <option value="">-- Choisissez un format --</option>
+            <option value="mp4">MP4</option>
+            <option value="mp3">MP3</option>
+            <option value="avi">AVI</option>
+            <option value="wav">WAV</option>
+            <option value="ogg">OGG</option>
+          </select>
+        </div>
+        
+        <button type="submit">Convertir Maintenant</button>
+      </form>
+
+      <div id="progress">
+        <p>Conversion en cours...</p>
+        <progress id="conversionProgress" value="0" max="100"></progress>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <i class="fas fa-bolt"></i>
+        <h3>Ultra-Rapide</h3>
+        <p>Conversion éclair pour tous vos fichiers</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-lock"></i>
+        <h3>100% Sécurisé</h3>
+        <p>Vos fichiers sont supprimés après conversion</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-mobile-alt"></i>
+        <h3>Multi-Appareils</h3>
+        <p>Fonctionne sur tous vos appareils</p>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/0.10.1/ffmpeg.min.js"></script>
+<script>
+document.getElementById('convertForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const file = document.getElementById('fileInput').files[0];
+  const format = document.getElementById('formatSelect').value;
+  const progress = document.getElementById('progress');
+  const progressBar = document.getElementById('conversionProgress');
+
+  if (!file || !format) {
+    alert('Veuillez sélectionner un fichier et un format de sortie.');
+    return;
+  }
+
+  progress.style.display = 'block';
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const fileData = new Uint8Array(e.target.result);
+
+    const worker = new Worker('https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/0.10.1/ffmpeg-worker-mp4.js');
+
+    worker.onmessage = function(e) {
+      const msg = e.data;
+      switch (msg.type) {
+        case 'ready':
+          worker.postMessage({
+            type: 'run',
+            arguments: ['-i', 'input.' + file.name.split('.').pop(), 'output.' + format]
+          });
+          break;
+        case 'stdout':
+          console.log(msg.data);
+          break;
+        case 'stderr':
+          console.log(msg.data);
+          // Update progress based on ffmpeg output
+          const match = msg.data.match(/time=(\d{2}):(\d{2}):(\d{2})\.\d{2}/);
+          if (match) {
+            const seconds = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]);
+            progressBar.value = (seconds / file.duration) * 100;
+          }
+          break;
+        case 'done':
+          const result = msg.data.MEMFS[0];
+          const blob = new Blob([result.data], { type: 'application/' + format });
+          
+          // Compression du fichier avant le téléchargement
+          compressFile(blob).then(compressedBlob => {
+            const url = URL.createObjectURL(compressedBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted_compressed.' + format;
+            a.click();
+            URL.revokeObjectURL(url);
+            progress.style.display = 'none';
+          });
+          break;
+      }
+    };
+
+    worker.postMessage({
+      type: 'write',
+      data: fileData,
+      name: 'input.' + file.name.split('.').pop()
+    });
+  };
+
+  reader.readAsArrayBuffer(file);
+});
+
+// Fonction de compression de fichier
+async function compressFile(blob) {
+  // Ici, vous pouvez implémenter une logique de compression
+  // Pour cet exemple, nous allons simplement retourner le blob original
+  // Dans une implémentation réelle, vous utiliseriez une bibliothèque de compression
+  return blob;
+}
+</script>
+
+</body></html>
